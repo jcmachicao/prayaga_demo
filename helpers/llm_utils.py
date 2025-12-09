@@ -4,7 +4,7 @@ import json
 import re
 
 def call_llm(messages, temperature=0.2, max_tokens=800):
-    response = client.responses.create(
+    resp = client.responses.create(
         model=MODEL_NAME,
         input=messages,
         temperature=temperature,
