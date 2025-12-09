@@ -3,13 +3,15 @@ import json
 import re
 
 def call_llm(messages, temperature=0.2, max_tokens=800):
-    resp = client.chat.completions.create(
+    resp = openai.responses.create(
         model=MODEL_NAME,
-        messages=messages,
+        input=messages,
         temperature=temperature,
         max_tokens=max_tokens,
     )
-    return resp.choices[0].message.content
+    # r1 = resp.choices[0].message.content
+    r2 = resp.output_text
+    return r2
 
 
 def extract_json(text: str):
