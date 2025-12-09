@@ -63,37 +63,59 @@ def approve(final_text, eval_str, approved):
 
     return "Approved successfully!", True
 
+# Enriched build_ui
 def build_ui():
+    instructions = load_instructions()
+    checklist = load_checklist()
+
     with gr.Blocks() as demo:
-        # Main row
+        gr.Markdown("## Prayaga Demo – Iterative Draft Improvement")
+
         with gr.Row():
-            # Left column: input
-            with gr.Column(scale=1, min_width=200):
-                prompt_input = gr.Textbox(
-                    label="Prompt", 
-                    value="", 
-                    lines=3, 
-                    placeholder="Type your prompt here..."
+            # Left column: instructions and checklist
+            with gr.Column():
+                instructions_box = gr.Textbox(
+                    value=instructions,
+                    label="Instructions",
+                    lines=5,
+                    interactive=True
                 )
-                submit_button = gr.Button(
-                    value="Submit",  # 'value' must be string
-                    elem_id="submit_button"  # optional, must be string
-                )
-
-            # Right column: output
-            with gr.Column(scale=2, min_width=400):
-                output_text = gr.Textbox(
-                    label="Output", 
-                    value="", 
-                    lines=10, 
-                    interactive=False
+                checklist_box = gr.Textbox(
+                    value=json.dumps(checklist, indent=2),
+                    label="Checklist JSON",
+                    lines=15,
+                    interactive=True
                 )
 
-        # Connect button to update output
-        submit_button.click(
-            fn=lambda prompt: f"Echo: {prompt}",  # replace with your actual function
-            inputs=prompt_input,
-            outputs=output_text
+            # Middle column: chat and draft interaction
+            with gr.Column():
+                chat_state = gr.State([])  # maintain history
+                chat_display = gr.Chatbot(label="Iterations")
+                draft = gr.Textbox(label="Your Draft", lines=5)
+                
+                update_btn = gr.Button("Update and Check my Content")
+                approve_chk = gr.Checkbox(label="Approve")
+                approve_btn = gr.Button("Approve Final Text")
+                
+                eval_box = gr.Textbox(label="Evaluation JSON", lines=10)
+
+            # Right column: improved text and status
+            with gr.Column():
+                improved_text = gr.Textbox(label="Improved Text", lines=20)
+                status = gr.Textbox(label="Status", interactive=False)
+
+        # Bind update button to the update_and_check function
+        update_btn.click(
+            update_and_check,
+            inputs=[draft, chat_state, instructions_box, checklist_box],
+            outputs=[chat_display, improved_text, eval_box],
+        )
+
+        # Bind approve button to the approve function
+        approve_btn.click(
+            approve,
+            inputs=[improved_text, eval_box, approve_chk],
+            outputs=[status, approve_chk],
         )
 
     return demo
