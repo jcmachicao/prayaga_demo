@@ -63,47 +63,40 @@ def approve(final_text, eval_str, approved):
 
     return "Approved successfully!", True
 
-
-# Build UI
 def build_ui():
-    instructions = load_instructions()
-    checklist = load_checklist()
-
     with gr.Blocks() as demo:
+        # Main row
         with gr.Row():
-            with gr.Column():
-                instructions_box = gr.Textbox(value=instructions, label="Instructions")
-                checklist_box = gr.Textbox(value=json.dumps(checklist, indent=2), label="Checklist JSON")
+            # Left column: input
+            with gr.Column(scale=1, min_width=200):
+                prompt_input = gr.Textbox(
+                    label="Prompt", 
+                    value="", 
+                    lines=3, 
+                    placeholder="Type your prompt here..."
+                )
+                submit_button = gr.Button(
+                    value="Submit",  # 'value' must be string
+                    elem_id="submit_button"  # optional, must be string
+                )
 
-            with gr.Column():
-                chat_state = gr.State([])
-                chat_display = gr.Chatbot(label="Iterations")
-                draft = gr.Textbox(label="Your draft")
+            # Right column: output
+            with gr.Column(scale=2, min_width=400):
+                output_text = gr.Textbox(
+                    label="Output", 
+                    value="", 
+                    lines=10, 
+                    interactive=False
+                )
 
-                update_btn = gr.Button("Update and Check my Content")
-                approve_chk = gr.Checkbox(label="Approve")
-                approve_btn = gr.Button("Approve Final Text")
-
-                eval_box = gr.Textbox(label="Evaluation JSON")
-
-            with gr.Column():
-                improved_text = gr.Textbox(label="Improved Text", lines=20)
-                status = gr.Textbox(label="Status")
-
-        update_btn.click(
-            update_and_check,
-            inputs=[draft, chat_state, instructions_box, checklist_box],
-            outputs=[chat_display, improved_text, eval_box],
-        )
-
-        approve_btn.click(
-            approve,
-            inputs=[improved_text, eval_box, approve_chk],
-            outputs=[status, approve_chk],
+        # Connect button to update output
+        submit_button.click(
+            fn=lambda prompt: f"Echo: {prompt}",  # replace with your actual function
+            inputs=prompt_input,
+            outputs=output_text
         )
 
     return demo
-
 
 demo = build_ui()
 
