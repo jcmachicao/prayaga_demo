@@ -5,7 +5,7 @@ import re
 
 def call_llm(messages, temperature=0.2, max_tokens=800):
     response = client.responses.create(
-        model="gpt-4.1-mini",
+        model=MODEL_NAME,
         input=mesagges,
         temperature=temperature,
         max_tokens=max_tokens,
