@@ -105,10 +105,8 @@ def build_ui():
     return demo
 
 
-# Define Gradio interface
 demo = build_ui()
 
 if __name__ == "__main__":
-    PORT = int(os.environ.get("PORT", 8000))  # Render provides PORT
-    demo.launch(server_name="0.0.0.0", server_port=PORT, share=True)
-
+    PORT = int(os.environ.get("PORT", 8000))
+    demo.launch(server_name="0.0.0.0", server_port=PORT)  # or share=True
