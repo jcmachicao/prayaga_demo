@@ -1,0 +1,4 @@
+Tone: Formal, concise, and professional. Use neutral language appropriate for reporting to an external managing organization.
+Structure: Start with a one-line statement of objective, then a 2-3 sentence summary of the outcome, followed by key evidence/metrics and concluding with the next steps or recommendations if any.
+Focus: Be explicit about what was achieved and avoid speculative or unverified claims. Keep the final text clear for non-technical managers.
+Length: Aim for about 180-220 words if possible, but shorter is acceptable if information is incomplete.
