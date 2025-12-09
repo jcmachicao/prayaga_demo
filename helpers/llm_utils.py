@@ -1,4 +1,5 @@
 from config import MODEL_NAME, PREFERRED_WORD_TARGET
+import openai
 import json
 import re
 
