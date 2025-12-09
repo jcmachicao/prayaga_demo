@@ -112,4 +112,5 @@ def build_ui():
 demo = build_ui()
 
 if __name__ == "__main__":
-    demo.launch()
+    PORT = int(os.environ.get("PORT", 8000))  # Render provides PORT
+    iface.launch(server_name="0.0.0.0", server_port=PORT)
