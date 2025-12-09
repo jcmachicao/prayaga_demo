@@ -6,6 +6,13 @@ from helpers.io_utils import load_instructions, load_checklist
 from helpers.iter_logic import improve_and_evaluate, checklist_passed
 from config import MAX_ITERATIONS
 
+import gradio.routes
+
+def _patched_api_info(*args, **kwargs):
+    return {"api_info": {}}
+
+gradio.routes.api_info = _patched_api_info
+
 # Gradio Callback
 def update_and_check(draft, history, instructions, checklist_str):
     checklist = json.loads(checklist_str)
