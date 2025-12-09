@@ -1,6 +1,5 @@
 FROM python:3.10-slim
 
-# Create working directory
 WORKDIR /app
 
 # Install system dependencies
@@ -11,13 +10,12 @@ RUN apt-get update && apt-get install -y \
 # Copy project files
 COPY . /app
 
-# Install Python dependencies
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose Render port for HTTP
+# Render exposes the port via ENV
 ENV PORT=7860
 EXPOSE 7860
 
-# Start the service
-CMD ["bash", "start.sh"]
- 
+# Launch app
+CMD ["python", "app.py"]
