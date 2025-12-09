@@ -2,7 +2,8 @@
 import os
 import openai
 
-API_KEY = os.getenv("OAIK")       # Your HF Secret
+# API_KEY = os.getenv("OAIK")       # Your HF Secret
+API_KEY = {{ OAIK }}
 MODEL_NAME = "gpt-4"
 MAX_ITERATIONS = 6
 PREFERRED_WORD_TARGET = 200
