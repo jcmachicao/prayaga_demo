@@ -64,53 +64,44 @@ def approve(final_text, eval_str, approved):
     return "Approved successfully!", True
 
 # Enriched build_ui
+# Enriched Build UI
 def build_ui():
     instructions = load_instructions()
     checklist = load_checklist()
 
     with gr.Blocks() as demo:
         with gr.Row():
-            # Left column: Instructions & checklist
             with gr.Column():
-                instructions_box = gr.Textbox(
-                    value=instructions, label="Instructions", lines=10, interactive=True
-                )
-                checklist_box = gr.Textbox(
-                    value=json.dumps(checklist, indent=2),
-                    label="Checklist JSON",
-                    lines=15,
-                    interactive=True,
-                )
+                instructions_box = gr.Textbox(value=instructions, label="Instructions", lines=10)
+                checklist_box = gr.Textbox(value=json.dumps(checklist, indent=2), label="Checklist JSON", lines=10)
 
-            # Middle column: Chat & draft
             with gr.Column():
-                chat_state = gr.State([])  # store iterations
+                chat_state = gr.State([])  # Stores chat history
                 chat_display = gr.Chatbot(label="Iterations")
-                draft = gr.Textbox(label="Your draft", lines=10)
+                draft = gr.Textbox(label="Your draft", lines=5)
 
                 update_btn = gr.Button("Update and Check my Content")
                 approve_chk = gr.Checkbox(label="Approve")
                 approve_btn = gr.Button("Approve Final Text")
 
-                eval_box = gr.Textbox(label="Evaluation JSON", lines=10)
+                eval_box = gr.Textbox(label="Evaluation JSON", lines=10, interactive=False)
 
-            # Right column: Improved text and status
             with gr.Column():
                 improved_text = gr.Textbox(label="Improved Text", lines=20)
-                status = gr.Textbox(label="Status", interactive=False)
+                status = gr.Textbox(label="Status", lines=2, interactive=False)
 
-        # Link buttons to functions
+        # Update & check iterations
         update_btn.click(
             update_and_check,
             inputs=[draft, chat_state, instructions_box, checklist_box],
             outputs=[chat_display, improved_text, eval_box],
         )
 
-        # Only return status message to avoid Gradio boolean/JSON issues
+        # Approve final text
         approve_btn.click(
             approve,
             inputs=[improved_text, eval_box, approve_chk],
-            outputs=[status],
+            outputs=[status, approve_chk],
         )
 
     return demo
