@@ -20,3 +20,4 @@ EXPOSE 7860
 
 # Start the service
 CMD ["bash", "start.sh"]
+ 
