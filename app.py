@@ -41,32 +41,26 @@ def update_and_check(draft, history, instructions, checklist_str):
 
 
 def approve(final_text, eval_str, approved):
-
-    # --- Normalize checkbox value to real boolean ---
     approved_bool = False
     if isinstance(approved, bool):
         approved_bool = approved
     else:
-        # Convert strings like "true", "on", "1"
         approved_bool = str(approved).strip().lower() in ["true", "1", "yes", "on"]
 
     if not approved_bool:
         return "Please check 'Approve' to continue.", False
 
-    # --- Parse evaluation JSON safely ---
     try:
         eval_json = json.loads(eval_str)
     except Exception as e:
         return f"Cannot approve — evaluation is missing or invalid ({e}).", False
 
-    # --- Verify checklist ---
     try:
         if not checklist_passed(eval_json):
             return "Cannot approve — checklist not satisfied. Please complete all items.", False
     except Exception as e:
         return f"Cannot approve — checklist error ({e}).", False
 
-    # --- All good ---
     return "Approved successfully!", True
 
 
@@ -110,8 +104,10 @@ def build_ui():
 
     return demo
 
+
+# Define Gradio interface
 demo = build_ui()
 
 if __name__ == "__main__":
     PORT = int(os.environ.get("PORT", 8000))  # Render provides PORT
-    iface.launch(server_name="0.0.0.0", server_port=PORT)
+    demo.launch(server_name="0.0.0.0", server_port=PORT)
