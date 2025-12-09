@@ -6,7 +6,7 @@ import re
 def call_llm(messages, temperature=0.2, max_tokens=800):
     response = client.responses.create(
         model=MODEL_NAME,
-        input=mesagges,
+        input=messages,
         temperature=temperature,
         max_tokens=max_tokens,
     )
