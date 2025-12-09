@@ -69,53 +69,48 @@ def build_ui():
     checklist = load_checklist()
 
     with gr.Blocks() as demo:
-        gr.Markdown("## Prayaga Demo – Iterative Draft Improvement")
-
         with gr.Row():
-            # Left column: instructions and checklist
+            # Left column: Instructions & checklist
             with gr.Column():
                 instructions_box = gr.Textbox(
-                    value=instructions,
-                    label="Instructions",
-                    lines=5,
-                    interactive=True
+                    value=instructions, label="Instructions", lines=10, interactive=True
                 )
                 checklist_box = gr.Textbox(
                     value=json.dumps(checklist, indent=2),
                     label="Checklist JSON",
                     lines=15,
-                    interactive=True
+                    interactive=True,
                 )
 
-            # Middle column: chat and draft interaction
+            # Middle column: Chat & draft
             with gr.Column():
-                chat_state = gr.State([])  # maintain history
+                chat_state = gr.State([])  # store iterations
                 chat_display = gr.Chatbot(label="Iterations")
-                draft = gr.Textbox(label="Your Draft", lines=5)
-                
+                draft = gr.Textbox(label="Your draft", lines=10)
+
                 update_btn = gr.Button("Update and Check my Content")
                 approve_chk = gr.Checkbox(label="Approve")
                 approve_btn = gr.Button("Approve Final Text")
-                
+
                 eval_box = gr.Textbox(label="Evaluation JSON", lines=10)
 
-            # Right column: improved text and status
+            # Right column: Improved text and status
             with gr.Column():
                 improved_text = gr.Textbox(label="Improved Text", lines=20)
                 status = gr.Textbox(label="Status", interactive=False)
 
-        # Bind update button to the update_and_check function
+        # Link buttons to functions
         update_btn.click(
             update_and_check,
             inputs=[draft, chat_state, instructions_box, checklist_box],
             outputs=[chat_display, improved_text, eval_box],
         )
 
-        # Bind approve button to the approve function
+        # Only return status message to avoid Gradio boolean/JSON issues
         approve_btn.click(
             approve,
             inputs=[improved_text, eval_box, approve_chk],
-            outputs=[status, approve_chk],
+            outputs=[status],
         )
 
     return demo
@@ -125,3 +120,4 @@ demo = build_ui()
 if __name__ == "__main__":
     PORT = int(os.environ.get("PORT", 8000))
     demo.launch(server_name="0.0.0.0", server_port=PORT, share=True)  # or share=True
+
