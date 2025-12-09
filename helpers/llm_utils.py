@@ -8,10 +8,10 @@ def call_llm(messages, temperature=0.2, max_tokens=800):
         model=MODEL_NAME,
         input=messages,
         temperature=temperature,
-        max_tokens=max_tokens,
+        max_output_tokens=max_tokens,
     )
     
-    r1 = resp.choices[0].message.content
+    r1 = resp.output[0].content[0].text
     return r1
 
 
