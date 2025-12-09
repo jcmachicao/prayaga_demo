@@ -1,18 +1,18 @@
-from config import MODEL_NAME, PREFERRED_WORD_TARGET
+from config import client, MODEL_NAME, PREFERRED_WORD_TARGET
 import openai
 import json
 import re
 
 def call_llm(messages, temperature=0.2, max_tokens=800):
-    resp = openai.responses.create(
-        model=MODEL_NAME,
-        input=messages,
+    response = client.responses.create(
+        model="gpt-4.1-mini",
+        input=mesagges,
         temperature=temperature,
         max_tokens=max_tokens,
     )
-    # r1 = resp.choices[0].message.content
-    r2 = resp.output_text
-    return r2
+    
+    r1 = resp.choices[0].message.content
+    return r1
 
 
 def extract_json(text: str):
