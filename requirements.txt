@@ -1,5 +1,9 @@
-openai==1.17.0
+pip==24.0
+setuptools==68.0.0
+wheel
+
 gradio==3.50.2
+openai==1.17.0
 huggingface_hub==0.19.4
 uvicorn==0.29.0
 fastapi==0.110.0
