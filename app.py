@@ -17,35 +17,33 @@ gradio.routes.api_info = _patched_api_info
 def update_and_check(draft, history, instructions, checklist_str):
     checklist = json.loads(checklist_str)
     prev = None
+
+    # history is a list of [user, assistant] pairs (Gradio format)
     history = history or []
+
+    # Helper to append assistant messages properly
+    def add_assistant(text):
+        history.append(["", text])  # user="", assistant=text
 
     for i in range(MAX_ITERATIONS):
         improved, eval_json = improve_and_evaluate(instructions, checklist, draft, prev)
         prev = improved
 
-        # ✔ Chatbot message format (v3)
-        history.append({
-            "role": "assistant",
-            "content": f"**Iteration {i+1} – Updated Text:**\n\n{improved}"
-        })
+        # Assistant updated text
+        add_assistant(f"**Iteration {i+1} – Updated Text:**\n\n{improved}")
 
-        history.append({
-            "role": "assistant",
-            "content": f"**Evaluation JSON:**\n```json\n{json.dumps(eval_json, indent=2)}\n```"
-        })
+        # Assistant evaluation JSON
+        add_assistant(
+            f"**Evaluation JSON:**\n```json\n{json.dumps(eval_json, indent=2)}\n```"
+        )
 
         if checklist_passed(eval_json):
-            history.append({
-                "role": "system",
-                "content": "Checklist passed — awaiting user approval."
-            })
+            add_assistant("Checklist passed — awaiting user approval.")
             break
 
         draft = improved
 
-    # Outputs: chatbot history, improved draft, evaluation JSON formatted string
     return history, prev, json.dumps(eval_json, indent=2)
-
 
 def approve(final_text, eval_str, approved):
     approved_bool = False
