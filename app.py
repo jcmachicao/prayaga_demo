@@ -14,7 +14,7 @@ def _patched_api_info(*args, **kwargs):
 gradio.routes.api_info = _patched_api_info
 
 # Gradio Callback
-def update_and_check(draft, history, instructions, checklist_str):
+def update_and_check_x_it(draft, history, instructions, checklist_str):
     checklist = json.loads(checklist_str)
     prev = None
 
@@ -43,6 +43,39 @@ def update_and_check(draft, history, instructions, checklist_str):
 
         draft = improved
 
+    return history, prev, json.dumps(eval_json, indent=2)
+
+def update_and_check(draft, history, instructions, checklist_str):
+    checklist = json.loads(checklist_str)
+    history = history or []
+    prev = None
+
+    # Helper to append assistant messages correctly (Gradio format)
+    def add_assistant(text):
+        history.append(["", text])
+
+    # --- ONE ITERATION ONLY ---
+    improved, eval_json = improve_and_evaluate(instructions, checklist, draft, prev)
+    prev = improved
+
+    # Updated text
+    add_assistant(f"**Updated Text:**\n\n{improved}")
+
+    # Evaluation JSON
+    add_assistant(
+        f"**Evaluation JSON:**\n```json\n{json.dumps(eval_json, indent=2)}\n```"
+    )
+
+    # Optional: mark if passed
+    if checklist_passed(eval_json):
+        add_assistant("Checklist passed — awaiting user approval.")
+    else:
+        add_assistant("Checklist not passed — continue editing.")
+
+    # Return:
+    # 1. History (list of [user, assistant])
+    # 2. Improved text
+    # 3. Evaluation JSON pretty-printed
     return history, prev, json.dumps(eval_json, indent=2)
 
 def approve(final_text, eval_str, approved):
